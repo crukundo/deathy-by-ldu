@@ -1,30 +1,293 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script>document.getElementsByTagName("html")[0].className += " js";</script>
   <link id="codyframe" rel="stylesheet" href="assets/css/style.css">
-  <link href='https://api.mapbox.com/mapbox-gl-js/v1.11.1/mapbox-gl.css' rel='stylesheet' />
   <!-- browsers not supporting CSS variables -->
   <script>
-    if(!('CSS' in window) || !CSS.supports('color', 'var(--color-var)')) {var cfStyle = document.getElementById('codyframe');if(cfStyle) {var href = cfStyle.getAttribute('href');href = href.replace('style.css', 'style-fallback.css');cfStyle.setAttribute('href', href);}}
+    if (!('CSS' in window) || !CSS.supports('color', 'var(--color-var)')) { var cfStyle = document.getElementById('codyframe'); if (cfStyle) { var href = cfStyle.getAttribute('href'); href = href.replace('style.css', 'style-fallback.css'); cfStyle.setAttribute('href', href); } }
   </script>
+
+  <!-- Mapbox CDN-->
+  <script src='https://api.mapbox.com/mapbox-gl-js/v1.11.1/mapbox-gl.js'></script>
+  <link href='https://api.mapbox.com/mapbox-gl-js/v1.11.1/mapbox-gl.css' rel='stylesheet' />
   <title>Death by LDU in Uganda</title>
 </head>
+
 <body>
-  
-<script src="assets/js/scripts.js"></script>
 
-<script type="text/javascript">
-  var mapboxgl = require('mapbox-gl/dist/mapbox-gl.js');
+  <div class="padding-component hide@md no-js:is-hidden">
+    <button class="btn btn--primary" aria-controls="sidebar">Show incidents</button>
+  </div>
 
-  mapboxgl.accessToken = 'pk.eyJ1Ijoia29sbGluc2F5eiIsImEiOiJjaWVoNzJxcTcwMDlvc3JtMXBtNmg4aWl6In0.T8YV7TzgBTTWQT19_pjceQ';
-  var map = new mapboxgl.Map({
-    container: 'map',
-    style: 'mapbox://styles/mapbox/streets-v11'
-  });
+  <div class="flex@md">
+    <aside class="sidebar sidebar--static@md js-sidebar"
+      data-static-class="position-relative z-index-1 flex-grow max-width-xxxxs border-right" id="sidebar"
+      aria-labelledby="sidebarTitle">
+      <div id="listings" class="sidebar__panel">
+        <header class="sidebar__header z-index-2">
+          <h1 class="text-md text-truncate" id="sidebarTitle">#DisbandLDUs</h1>
 
-</script>
+          <button class="reset sidebar__close-btn js-sidebar__close-btn js-tab-focus">
+            <svg class="icon" viewBox="0 0 16 16">
+              <title>Close panel</title>
+              <g stroke-width="1" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"
+                stroke-miterlimit="10">
+                <line x1="13.5" y1="2.5" x2="2.5" y2="13.5"></line>
+                <line x1="2.5" y1="2.5" x2="13.5" y2="13.5"></line>
+              </g>
+            </svg>
+          </button>
+        </header>
+
+        <div class="position-relative z-index-1">
+          <!-- start sidebar content -->
+          <div class="text-component padding-md">
+            <p>All Incidents</p>
+          </div>
+          <!-- end sidebar content -->
+        </div>
+      </div>
+    </aside>
+
+    <main class="position-relative z-index-1 flex-grow height-100vh">
+      <div class="container max-width-adaptive-lg" id="map">
+        loading map
+      </div>
+    </main>
+  </div>
+
+  <script src="assets/js/scripts.js"></script>
+  <!-- Get tabletop -->
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/tabletop.js/1.5.1/tabletop.min.js'></script>
+  <!--Mapbox Engine-->
+  <script type="text/javascript">
+    var publicSpreadsheetUrl = 'https://docs.google.com/spreadsheets/d/1d6mKdDeb88slLSqXGMo7zDyTXpF1GFDzQIQE8Hv2vjw/pubhtml';
+    /*https://docs.google.com/spreadsheets/d/1d6mKdDeb88slLSqXGMo7zDyTXpF1GFDzQIQE8Hv2vjw/pubhtml*/
+
+    function init() {
+      Tabletop.init({
+        key: publicSpreadsheetUrl,
+        callback: showInfo,
+        simpleSheet: true
+      })
+    }
+
+    var features = [];
+
+    function showInfo(data, tabletop) {
+      data.forEach(function (data) {
+        if (data.coordinates !== "#ERROR!") {
+          console.log()
+          // store all lat, lng as geojson features
+          var coordinates = [data.lat, data.long];
+          features.push(JSON.parse('{"type":"Feature","properties":{"id":"' + data.id + '","location":"' + data.location + '","country":"' + data.country + '","partner":"' + data.partner + '","image":"' + data.image + '","link":"' + data.link + '","overview":"' + data.overview + '"},"geometry":{"type":"Point","coordinates":[' + coordinates + ']}}'));
+        }
+      });
+
+      console.log(features);
+    }
+
+    window.addEventListener('DOMContentLoaded', init)
+
+    // This will let you use the .remove() function later on
+    if (!('remove' in Element.prototype)) {
+      Element.prototype.remove = function () {
+        if (this.parentNode) {
+          this.parentNode.removeChild(this);
+        }
+      };
+    }
+
+    mapboxgl.accessToken = 'pk.eyJ1Ijoia29sbGluc2F5eiIsImEiOiJjaWVoNzJxcTcwMDlvc3JtMXBtNmg4aWl6In0.T8YV7TzgBTTWQT19_pjceQ';
+
+    var bounds = [
+      [29.766181640625004, -1.4829886856602814],
+      [34.99145507812501, 4.225899677985493]
+    ];
+
+    var xpCenter = [32.354470, 1.258024];
+
+    var map = new mapboxgl.Map({
+      container: 'map', // container id
+      style: 'mapbox://styles/kollinsayz/ckcg0fvjk0nhw1iqxee5ikh79', // stylesheet location
+      center: xpCenter, // starting position [lng, lat]
+      zoom: 7, // starting zoom
+      scrollZoom: false,
+      maxBounds: bounds,
+      boxZoom: false,
+      dragRotate: false,
+      //  dragPan: false,
+      doubleClickZoom: false
+    });
+
+    /**
+     * Assign a unique id to each store. You'll use this `id`
+     * later to associate each point on the map with a listing
+     * in the sidebar.
+    */
+    features.forEach(function (feature, i) {
+      feature.properties.id = i;
+    });
+
+    /**
+     * Wait until the map loads to make changes to the map.
+    */
+    map.on('load', function (e) {
+
+      /** 
+       * This is where your '.addLayer()' used to be, instead
+       * add only the source without styling a layer
+      */
+      map.addSource('locations', {
+        "type": "geojson",
+        "data": {
+          'type': 'FeatureCollection',
+          'features': features
+        }
+      });
+
+      /**
+       * Add all the things to the page:
+       * - The location listings on the side of the page
+       * - The markers onto the map
+      */
+      map.resize();
+      buildLocationList(features);
+      addMarkers();
+    });
+
+    /**
+     * Add a marker to the map for every store listing.
+    **/
+    function addMarkers() {
+      /* For each feature in the GeoJSON object above: */
+      features.forEach(function (marker) {
+        /* Create a div element for the marker. */
+        var el = document.createElement('div');
+        /* Assign a unique `id` to the marker. */
+        el.id = "marker-" + marker.properties.id;
+        /* Assign the `marker` class to each marker for styling. */
+        el.className = 'marker';
+
+        /**
+         * Create a marker using the div element
+         * defined above and add it to the map.
+        **/
+        new mapboxgl.Marker(el, { offset: [0, -23] })
+          .setLngLat(marker.geometry.coordinates)
+          .addTo(map);
+
+        /**
+         * Listen to the element and when it is clicked, do three things:
+         * 1. Fly to the point
+         * 2. Close all other popups and display popup for clicked store
+         * 3. Highlight listing in sidebar (and remove highlight for all other listings)
+        **/
+        el.addEventListener('click', function (e) {
+          /* Fly to the point */
+          flyToStore(marker);
+          /* Close all other popups and display popup for clicked store */
+          createPopUp(marker);
+          /* Highlight listing in sidebar */
+          var activeItem = document.getElementsByClassName('active');
+          e.stopPropagation();
+          if (activeItem[0]) {
+            activeItem[0].classList.remove('active');
+          }
+          var listing = document.getElementById('listing-' + marker.properties.id);
+          listing.classList.add('active');
+        });
+      });
+    }
+
+    /**
+     * Add a listing for each store to the sidebar.
+    **/
+    function buildLocationList(data) {
+      features.forEach(function (feature, i) {
+        /**
+         * Create a shortcut for `store.properties`,
+         * which will be used several times below.
+        **/
+        var prop = feature.properties;
+
+        /* Add a new listing section to the sidebar. */
+        var listing = listings.appendChild(document.createElement('div'));
+        /* Assign a unique `id` to the listing. */
+        listing.id = "listing-" + prop.id;
+        /* Assign the `item` class to each listing for styling. */
+        listing.className = 'item';
+
+        /* Add the link to the individual listing created above. */
+        var link = listing.appendChild(document.createElement('a'));
+        link.href = '#' + prop.id + '/';
+        link.className = 'title';
+        link.id = "link-" + prop.id;
+        link.innerHTML = prop.location + ', ' + prop.country;
+
+        /* Add details to the individual listing. */
+        // var details = listing.appendChild(document.createElement('div'));
+        // details.innerHTML = prop.country;
+
+        /**
+         * Listen to the element and when it is clicked, do four things:
+         * 1. Update the `currentFeature` to the store associated with the clicked link
+         * 2. Fly to the point
+         * 3. Close all other popups and display popup for clicked store
+         * 4. Highlight listing in sidebar (and remove highlight for all other listings)
+        **/
+        link.addEventListener('click', function (e) {
+          for (var i = 0; i < features.length; i++) {
+            if (this.id === "link-" + features[i].properties.id) {
+              var clickedListing = features[i];
+              flyToStore(clickedListing);
+              createPopUp(clickedListing);
+            }
+          }
+          var activeItem = document.getElementsByClassName('active');
+          if (activeItem[0]) {
+            activeItem[0].classList.remove('active');
+          }
+          this.parentNode.classList.add('active');
+        });
+      });
+    }
+
+    /**
+     * Use Mapbox GL JS's `flyTo` to move the camera smoothly
+     * a given center point.
+    **/
+    function flyToStore(currentFeature) {
+      map.flyTo({
+        center: currentFeature.geometry.coordinates,
+        zoom: 7
+      });
+    }
+
+    /**
+     * Create a Mapbox GL JS `Popup`.
+    **/
+    function createPopUp(currentFeature) {
+      var popUps = document.getElementsByClassName('mapboxgl-popup');
+      if (popUps[0]) popUps[0].remove();
+      var popup = new mapboxgl.Popup({ closeOnClick: false })
+        .setLngLat(currentFeature.geometry.coordinates)
+        .setHTML('<h5>' + currentFeature.properties.location + ', ' + currentFeature.properties.country + '</h5>' +
+          //    '<img src="' + currentFeature.properties.image + '" />' +
+          '<div style="height:150px;background-image:url(' + currentFeature.properties.image + ');background-size:cover;background-repeat:no-repeat;background-position:center center;" ></div>' +
+          '<h4><b>Partner(s):</b> ' + currentFeature.properties.partner + '</h4>' +
+          '<p>' + currentFeature.properties.overview + '</p>' +
+          '<a href="' + currentFeature.properties.link + '" target="_blank" download><p>Click for more information</p></a>'
+        )
+        .addTo(map);
+    }
+
+
+  </script>
 </body>
+
 </html>

@@ -7,5 +7,6 @@
 //   xl: 90rem
 // );
 
-@import 'base';
+@import '../../../node_modules/codyhouse-framework/main/assets/css/base';
 @import 'custom-style';
+@import 'components/**/*.scss';
