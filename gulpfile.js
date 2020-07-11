@@ -58,6 +58,7 @@ gulp.task('browserSync', gulp.series(function (done) {
     server: {
       baseDir: 'main'
     },
+    open: false,
     notify: false
   })
   done();
