@@ -27,7 +27,7 @@
     <aside class="sidebar sidebar--static@md js-sidebar"
       data-static-class="position-relative z-index-1 flex-grow max-width-xxxxs border-right" id="sidebar"
       aria-labelledby="sidebarTitle">
-      <div id="listings" class="sidebar__panel">
+      <div class="sidebar__panel">
         <header class="sidebar__header z-index-2">
           <h1 class="text-md text-truncate" id="sidebarTitle">#DisbandLDUs</h1>
 
@@ -47,6 +47,9 @@
           <!-- start sidebar content -->
           <div class="text-component padding-md">
             <p>All Incidents</p>
+            <ul id="listings">
+              
+            </ul>
           </div>
           <!-- end sidebar content -->
         </div>
@@ -84,7 +87,7 @@
           console.log()
           // store all lat, lng as geojson features
           var coordinates = [data.lat, data.long];
-          features.push(JSON.parse('{"type":"Feature","properties":{"id":"' + data.id + '","location":"' + data.location + '","country":"' + data.country + '","partner":"' + data.partner + '","image":"' + data.image + '","link":"' + data.link + '","overview":"' + data.overview + '"},"geometry":{"type":"Point","coordinates":[' + coordinates + ']}}'));
+          features.push(JSON.parse('{"type":"Feature","properties":{"id":"' + data.id + '","EventName":"' + data.EventName + '","VictimName":"' + data.VictimName + '","partner":"' + data.partner + '","image":"' + data.image + '","link":"' + data.link + '","overview":"' + data.overview + '"},"geometry":{"type":"Point","coordinates":[' + coordinates + ']}}'));
         }
       });
 
@@ -117,7 +120,7 @@
       center: xpCenter, // starting position [lng, lat]
       zoom: 7, // starting zoom
       scrollZoom: false,
-      maxBounds: bounds,
+      /* maxBounds: bounds, */
       boxZoom: false,
       dragRotate: false,
       //  dragPan: false,
@@ -156,6 +159,7 @@
        * - The markers onto the map
       */
       map.resize();
+
       buildLocationList(features);
       addMarkers();
     });
@@ -216,7 +220,7 @@
         var prop = feature.properties;
 
         /* Add a new listing section to the sidebar. */
-        var listing = listings.appendChild(document.createElement('div'));
+        var listing = listings.appendChild(document.createElement('li'));
         /* Assign a unique `id` to the listing. */
         listing.id = "listing-" + prop.id;
         /* Assign the `item` class to each listing for styling. */
@@ -227,7 +231,7 @@
         link.href = '#' + prop.id + '/';
         link.className = 'title';
         link.id = "link-" + prop.id;
-        link.innerHTML = prop.location + ', ' + prop.country;
+        link.innerHTML = prop.EventName;
 
         /* Add details to the individual listing. */
         // var details = listing.appendChild(document.createElement('div'));
@@ -276,10 +280,10 @@
       if (popUps[0]) popUps[0].remove();
       var popup = new mapboxgl.Popup({ closeOnClick: false })
         .setLngLat(currentFeature.geometry.coordinates)
-        .setHTML('<h5>' + currentFeature.properties.location + ', ' + currentFeature.properties.country + '</h5>' +
+        .setHTML('<h5>' + currentFeature.properties.EventName + '</h5>' +
           //    '<img src="' + currentFeature.properties.image + '" />' +
           '<div style="height:150px;background-image:url(' + currentFeature.properties.image + ');background-size:cover;background-repeat:no-repeat;background-position:center center;" ></div>' +
-          '<h4><b>Partner(s):</b> ' + currentFeature.properties.partner + '</h4>' +
+          '<h4><b>Victim:</b> ' + currentFeature.properties.VictimName + '</h4>' +
           '<p>' + currentFeature.properties.overview + '</p>' +
           '<a href="' + currentFeature.properties.link + '" target="_blank" download><p>Click for more information</p></a>'
         )
