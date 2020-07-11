@@ -2,7 +2,7 @@
   "name": "ldu-deaths",
   "version": "0.0.1",
   "scripts": {
-    "start": "node app",
+    "start": "node run",
     "postinstall": "gulp sass scripts"
   },
   "devDependencies": {
