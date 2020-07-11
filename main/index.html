@@ -19,6 +19,31 @@
 
 <body>
 
+  <header class="header position-relative js-header">
+    <div class="header__container container max-width-lg">
+      <div class="header__logo">
+        <a href="/">
+          <h1 class="text-lg color-white">Bujulizi</h1>
+        </a>
+      </div>
+  
+      <button class="btn btn--subtle header__trigger js-header__trigger" aria-label="Toggle menu" aria-expanded="false"
+        aria-controls="header-nav">
+        <i class="header__trigger-icon" aria-hidden="true"></i>
+        <span>Menu</span>
+      </button>
+  
+      <nav class="header__nav js-header__nav" id="header-nav" role="navigation" aria-label="Main">
+        <div class="header__nav-inner">
+          <div class="header__label">Main menu</div>
+          <ul class="header__list">
+            
+          </ul>
+        </div>
+      </nav>
+    </div>
+  </header>
+
   <div class="padding-component hide@md no-js:is-hidden">
     <button class="btn btn--primary" aria-controls="sidebar">Show incidents</button>
   </div>
@@ -46,7 +71,7 @@
         <div class="position-relative z-index-1 ">
           <!-- start sidebar content -->
           <div class="text-component padding-md">
-            <p class="text-lg">All Incidents</p>
+            <p>Tracking Corona-related violence and death in Uganda</p>
           </div>
           <ul id="listings" class="sidenav__list">
           </ul>
