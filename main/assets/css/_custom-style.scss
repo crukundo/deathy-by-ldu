@@ -19,32 +19,6 @@
     top:0;bottom:0;
     z-index: 950!important;
 }
-.listings {
-  
-}
-
-.listings .item {
-  display:block;
-  border-bottom:1px solid #ffffff;
-  padding:15px 20px;
-  text-decoration:none;
-}
-
-.listings .item:last-child { border-bottom:none; }
-.listings .item .title {
-  display:block;
-  color:#ffffff;
-  font-weight:500;
-  font-size: 20px;
-}
-
-.listings .item .title small { font-weight:400; }
-.listings .item.active .title,
-.listings .item .title:hover { color:#a8100f; }
-.listings .item.active {
-  background-color:#f8f8f8;
-  color: #a8100f;
-}
 
   .marker{
     position:absolute;

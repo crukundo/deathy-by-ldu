@@ -43,14 +43,14 @@
           </button>
         </header>
 
-        <div class="position-relative z-index-1">
+        <div class="position-relative z-index-1 ">
           <!-- start sidebar content -->
           <div class="text-component padding-md">
-            <p>All Incidents</p>
-            <ul id="listings">
-              
-            </ul>
+            <p class="text-lg">All Incidents</p>
           </div>
+          <ul id="listings" class="sidenav__list">
+          </ul>
+         
           <!-- end sidebar content -->
         </div>
       </div>
@@ -86,7 +86,7 @@
           console.log()
           // store all lat, lng as geojson features
           var coordinates = [data.lat, data.long];
-          features.push(JSON.parse('{"type":"Feature","properties":{"id":"' + data.id + '","EventName":"' + data.EventName + '","VictimName":"' + data.VictimName + '","partner":"' + data.partner + '","image":"' + data.image + '","link":"' + data.link + '","overview":"' + data.overview + '"},"geometry":{"type":"Point","coordinates":[' + coordinates + ']}}'));
+          features.push(JSON.parse('{"type":"Feature","properties":{"id":"' + data.id + '","EventName":"' + data.EventName + '","EventNarrative":"' + data.EventNarrative + '","NewsLink":"' + data.NewsLink + '","image":"' + data.image + '","link":"' + data.link + '","overview":"' + data.overview + '"},"geometry":{"type":"Point","coordinates":[' + coordinates + ']}}'));
         }
       });
 
@@ -223,14 +223,14 @@
         /* Assign a unique `id` to the listing. */
         listing.id = "listing-" + prop.id;
         /* Assign the `item` class to each listing for styling. */
-        listing.className = 'item';
+        listing.className = 'sidenav__item';
 
         /* Add the link to the individual listing created above. */
         var link = listing.appendChild(document.createElement('a'));
         link.href = '#' + prop.id + '/';
-        link.className = 'title';
+        link.className = 'sidenav__link';
         link.id = "link-" + prop.id;
-        link.innerHTML = prop.EventName;
+        link.innerHTML = "<span class='sidenav__text'>" + prop.EventName + "</span>";
 
         /* Add details to the individual listing. */
         // var details = listing.appendChild(document.createElement('div'));
@@ -282,9 +282,8 @@
         .setHTML('<h5>' + currentFeature.properties.EventName + '</h5>' +
           //    '<img src="' + currentFeature.properties.image + '" />' +
           '<div style="height:150px;background-image:url(' + currentFeature.properties.image + ');background-size:cover;background-repeat:no-repeat;background-position:center center;" ></div>' +
-          '<h4><b>Victim:</b> ' + currentFeature.properties.VictimName + '</h4>' +
-          '<p>' + currentFeature.properties.overview + '</p>' +
-          '<a href="' + currentFeature.properties.link + '" target="_blank" download><p>Click for more information</p></a>'
+          '<p>' + currentFeature.properties.EventNarrative + '</p>' +
+          '<a href="' + currentFeature.properties.NewsLink + '" target="_blank"><p>Click for more information</p></a>'
         )
         .addTo(map);
     }
